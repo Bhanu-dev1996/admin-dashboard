@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import "./App.css";
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login"; // Uncomment if you have a login page
+import { isAuthenticated, logout } from './auth';
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [page, setPage] = useState(isAuthenticated() ? "dashboard" : "login");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  const handleLogin = () => setPage("dashboard");
+
+
+  if (page === "login") {
+    return <Login onLogin={handleLogin} goToRegister={() => setPage("register")} goToForgot={() => setPage("forgot")} />;
+  }
+  if (page === "register") {
+    return <Register goToLogin={() => setPage("login")} />;
+  }
+  if (page === "forgot") {
+    return <ForgotPassword goToLogin={() => setPage("login")} />;
+  }
+
+  // Dashboard layout
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <ThemeProvider>
+      <div className="flex h-screen">
+        <Sidebar collapsed={sidebarCollapsed} />
+        <div className="flex-1 flex flex-col">
+          <Header
+            collapsed={sidebarCollapsed}
+            onToggleSidebar={() => setSidebarCollapsed((c) => !c)}
+          />
+          {/* Main Content */}
+          <main className="main-content flex-1 p-8 overflow-auto">
+            <div className="text-lg font-medium">
+              Main Content Area
+            </div>
+            {/* Add your dashboard widgets/components here */}
+            <Dashboard />
+          </main>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
