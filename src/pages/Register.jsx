@@ -24,6 +24,7 @@ export default function Register({ goToLogin }) {
   const [registered, setRegistered] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState("Manager"); // Add this line
 
   const isValidEmail = email =>
     /^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
@@ -53,7 +54,7 @@ export default function Register({ goToLogin }) {
     setLoading(true);
     setTimeout(() => {
       const users = JSON.parse(localStorage.getItem("users") || "[]");
-      users.push({ email: fullname, password });
+      users.push({ email: fullname, password, role }); // Add role here
       localStorage.setItem("users", JSON.stringify(users));
       setRegistered(true);
       setLoading(false);
@@ -165,6 +166,21 @@ export default function Register({ goToLogin }) {
                 {fieldErrors.confirm && (
                   <div className="text-red-400 text-xs mt-1">{fieldErrors.confirm}</div>
                 )}
+              </div>
+              <div>
+                <label htmlFor="role" className="block mb-1 text-[13px] text-[var(--text)] font-normal">
+                  Role
+                </label>
+                <select
+                  id="role"
+                  className="w-full p-2 border border-[var(--sidebar-border)] rounded"
+                  value={role}
+                  onChange={e => setRole(e.target.value)}
+                  disabled={loading}
+                >
+                  <option value="Manager">Manager</option>
+                  <option value="Admin">Admin</option>
+                </select>
               </div>
               <Button
                 label={loading ? "Creating Account..." : "Create Account"}

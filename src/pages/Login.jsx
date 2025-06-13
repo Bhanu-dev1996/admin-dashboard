@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { Checkbox } from 'primereact/checkbox';
 import { Mail, Facebook, Github } from "lucide-react"; // <-- Lucide icons
 import { Link } from "react-router-dom";
+import { authenticate } from "../auth"; // <-- Add this import
 
 // SocialButton for social icons
 const SocialButton = ({ icon, color, onClick, label }) => (
@@ -223,17 +224,5 @@ export default function Login({ onLogin, goToRegister, goToForgot }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function authenticate(email, password) {
-  // Demo credentials
-  const demoUser = { email: "admin@demo.com", password: "admin123" };
-  // Registered users from localStorage
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
-  // Check localStorage users or demo credentials
-  return (
-    users.some(user => user.email === email && user.password === password) ||
-    (email === demoUser.email && password === demoUser.password)
   );
 }
